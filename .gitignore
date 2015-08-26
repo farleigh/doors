@@ -1,0 +1,8 @@
+/bin/
+/lib/
+.project
+.classpath
+.checkstyle
+.cache
+*.class
+*.log

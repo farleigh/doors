@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="doors" default="build" basedir="."
+	xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property name="build.dir" value="bin" />
+    <property name="classes.build.dir" value="${build.dir}/classes"/>
+	<property name="test.build.dir" value="${build.dir}/tests"/>
+	<property name="src.dir" value="src" />
+	<property name="src.test.dir" value="test" />
+	<property name="release.dir" value="bin" />
+	<property name="reports.tests" value="${release.dir}/test-results" />
+
+	<path id="build.classpath">
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${build.dir}" />
+		</delete>
+	</target>
+
+	<target name="resolve">
+		<ivy:retrieve />
+	</target>
+
+	<target name="compile" depends="resolve" description="Compile doors project">
+		<mkdir dir="${classes.build.dir}" />
+		<javac includeantruntime="false" destdir="${classes.build.dir}">
+			<src path="${src.dir}" />
+			<classpath refid="build.classpath" />
+		</javac>
+	</target>
+	
+	<target name="compile-tests" depends="compile">
+        <mkdir dir="${test.build.dir}" />
+        <javac includeantruntime="false" destdir="${test.build.dir}">
+            <src path="${src.test.dir}" />
+            <classpath refid="build.classpath" />
+        </javac>	
+	</target>
+
+	<target name="test" depends="compile-tests">
+		<mkdir dir="${reports.tests}" />
+		
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath>
+				<pathelement location="${classes.build.dir}" />
+                <pathelement location="${test.build.dir}" />
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.tests}">
+				<fileset dir="${src.test.dir}">
+					<include name="**/*Test*.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+		
+		<junitreport todir="${report.dir}">
+			<fileset dir="${report.dir}" includes="TEST-*.xml" />
+			<report todir="${report.dir}" />
+		</junitreport>
+	</target>
+
+	<target name="build" depends="compile" description="Build a jar for doors project">
+		<jar jarfile="${release.dir}/doors.jar" includes="*.class"
+			basedir="${build.dir}" />
+	</target>
+
+</project>

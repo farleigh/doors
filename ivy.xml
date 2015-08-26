@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+	<info organisation="ca.farleigh" module="doors" />
+	<dependencies>
+		<dependency org="org.mockito" name="mockito-all" rev="1.8.4" />
+	</dependencies>
+</ivy-module>
