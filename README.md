@@ -1,1 +1,1 @@
-# doors
+# Example for blog article
