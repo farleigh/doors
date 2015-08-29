@@ -56,7 +56,7 @@ public class KeyCardCredentialsTests {
   public void testNotSameHashCode() {
     final KeyCardCredentials cred = new KeyCardCredentials("1234");
     final KeyCardCredentials cred2 = new KeyCardCredentials("12345");
-    assertNotEquals(cred.hashCode(), cred2.hashCode());
+    assertFalse(cred.hashCode() == cred2.hashCode());
   }
 
 }

@@ -2,71 +2,79 @@
 <project name="doors" default="build" basedir="."
 	xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<property name="build.dir" value="bin" />
-    <property name="classes.build.dir" value="${build.dir}/classes"/>
+	<property name="build.dir" value="bin"/>
+	<property name="classes.build.dir" value="${build.dir}/classes"/>
 	<property name="test.build.dir" value="${build.dir}/tests"/>
-	<property name="src.dir" value="src" />
-	<property name="src.test.dir" value="test" />
-	<property name="release.dir" value="bin" />
-	<property name="reports.tests" value="${release.dir}/test-results" />
+	<property name="src.int.test.dir" value="test-integrations"/>
+	<property name="src.dir" value="src"/>
+	<property name="src.test.dir" value="test"/>
+	<property name="release.dir" value="${build.dir}/jar"/>
+	<property name="reports.tests" value="${build.dir}/test-results"/>
+	<property name="test.lib.dir" value="lib"/>
 
-	<path id="build.classpath">
-		<fileset dir="lib">
-			<include name="**/*.jar" />
+	<path id="test.lib.classpath">
+		<fileset dir="${test.lib.dir}">
+			<include name="**/*.jar"/>
 		</fileset>
 	</path>
 
 	<target name="clean">
 		<delete includeEmptyDirs="true">
-			<fileset dir="${build.dir}" />
+			<fileset dir="${build.dir}"/>
+			<fileset dir="${test.lib.dir}"/>
 		</delete>
 	</target>
 
 	<target name="resolve">
-		<ivy:retrieve />
+		<ivy:retrieve/>
 	</target>
 
 	<target name="compile" depends="resolve" description="Compile doors project">
-		<mkdir dir="${classes.build.dir}" />
+		<mkdir dir="${classes.build.dir}"/>
 		<javac includeantruntime="false" destdir="${classes.build.dir}">
-			<src path="${src.dir}" />
-			<classpath refid="build.classpath" />
+			<src path="${src.dir}"/>
 		</javac>
 	</target>
 	
-	<target name="compile-tests" depends="compile">
-        <mkdir dir="${test.build.dir}" />
-        <javac includeantruntime="false" destdir="${test.build.dir}">
-            <src path="${src.test.dir}" />
-            <classpath refid="build.classpath" />
-        </javac>	
+	<target name="compile-tests" depends="build" description="Compile tests for doors project">
+        	<mkdir dir="${test.build.dir}"/>		
+		<javac includeantruntime="false" destdir="${test.build.dir}">
+			<classpath>
+				<pathelement path="${classes.build.dir}"/>
+				<path refid="test.lib.classpath"/>
+			</classpath>
+			<src path="${src.test.dir}"/>
+                </javac>
 	</target>
 
 	<target name="test" depends="compile-tests">
-		<mkdir dir="${reports.tests}" />
+		<mkdir dir="${reports.tests}"/>
 		
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath>
-				<pathelement location="${classes.build.dir}" />
-                <pathelement location="${test.build.dir}" />
+				<pathelement path="${classes.build.dir}"/>
+				<pathelement path="${test.build.dir}"/>
+				<path refid="test.lib.classpath"/>
 			</classpath>
-			<formatter type="xml" />
+			<formatter type="xml"/>
 			<batchtest fork="yes" todir="${reports.tests}">
 				<fileset dir="${src.test.dir}">
-					<include name="**/*Test*.java" />
+					<include name="**/*Test*.java"/>
 				</fileset>
 			</batchtest>
 		</junit>
 		
-		<junitreport todir="${report.dir}">
-			<fileset dir="${report.dir}" includes="TEST-*.xml" />
-			<report todir="${report.dir}" />
+		<mkdir dir="${reports.tests}/html"/>
+		<junitreport todir="${reports.tests}/html">
+			<fileset dir="${reports.tests}" includes="TEST-*.xml"/>
+			<report todir="${reports.tests}/html"/>
 		</junitreport>
 	</target>
 
 	<target name="build" depends="compile" description="Build a jar for doors project">
+		<mkdir dir="${release.dir}"/>
 		<jar jarfile="${release.dir}/doors.jar" includes="*.class"
-			basedir="${build.dir}" />
+			basedir="${build.dir}"/>
 	</target>
 
 </project>

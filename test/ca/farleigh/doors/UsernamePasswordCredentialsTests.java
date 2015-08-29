@@ -54,7 +54,7 @@ public class UsernamePasswordCredentialsTests {
   public void testNotSameHashCode() {
     final UsernamePasswordCredentials cred = new UsernamePasswordCredentials("William", "password");
     final UsernamePasswordCredentials cred2 = new UsernamePasswordCredentials("William", "password2");
-    assertNotEquals(cred.hashCode(), cred2.hashCode());
+    assertFalse(cred.hashCode() == cred2.hashCode());
   }
   
 }
